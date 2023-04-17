@@ -121,7 +121,7 @@ export default function App() {
     )
   }
 
-  function LoginScreen({ navigation }) {
+  function LoginScreen({ navigation, route }) {
 
     const goToHomeScreenCallBk = () => {
       console.log('-------------goToHomeScreenCallBk called-----------');
