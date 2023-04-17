@@ -3,29 +3,54 @@ import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useState } from 'react';
+import { createContext, useState } from 'react';
 import GetNowPlayingComponent from './src/components/GetNowPlayingComponent';
 import MovieDetailComponent from './src/components/MovieDetailComponent';
 import SignUpComponent from './src/components/SignUpComponent';
 import LoginComponent from './src/components/LoginComponent';
+import { getAuth, signOut } from "firebase/auth";
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+export const LogContext = createContext()
+
 export default function App() {
 
   const [isLoggedIn, setLoginState] = useState(false)
+  const [user, setUser] = useState("")
+  var uid = ""
+
+  const updateUser = (newID) => {
+    console.log("also here")
+    setUser(newID)
+    uid = newID
+    setLoginState(true)
+}
 
   const logout = (navigation) => {
-
-    setLoginState(false)
+    const auth = getAuth()
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      console.log("signed out")
+      setUser("")
+      uid = ""
+      setLoginState(false)
+    })
+    .catch((error) => {
+    // An error happened.
+      const errorCode = error.code
+      const errorMessage = error.message
+      console.log(`${errorCode}: ${errorMessage}`)
+    })
+    
   }
 
-  const login = (navigation) => {
-    navigation.goBack()
-    setLoginState(true)
-  }
+  // const login = (navigation) => {
+  //   navigation.goBack()
+  //   setLoginState(true)
+  // }
 
   function NowPlayingStackNavigator({ navigation }) {
     return (
@@ -73,12 +98,12 @@ export default function App() {
     //setTab2('Purchases')
     return (
       <View style={styles.container}>
-        {isLoggedIn &&
+        {user != "" &&
           <View>
             <Text>Your Purchases</Text>
           </View>
         }
-        {!isLoggedIn &&
+        {user == "" &&
           <View>
             <Text>You need to be logged in</Text>
             <Button
@@ -94,7 +119,7 @@ export default function App() {
   function LoginScreen({ navigation }) {
     return (
       <View style={styles.loginContainer}>
-        {isLoggedIn &&
+        {user != "" &&
           <View>
             <Text>You are logged in</Text>
             <Button
@@ -103,9 +128,9 @@ export default function App() {
             />
           </View>
         }
-        {!isLoggedIn &&
+        {user == "" &&
           <LoginComponent
-            isLoggedIn={isLoggedIn}
+            updateUser={updateUser}
 
           />
 
@@ -174,7 +199,7 @@ export default function App() {
 
           <MovieDetailComponent
             movieDetailObj={movie}
-            userLoggedIn={isLoggedIn}
+            userLoggedIn={user}
             onSignInOutButtonPressed={() => signInSignUpButtonPressed()} />
 
           {/* {!isLoggedIn &&
@@ -212,7 +237,13 @@ export default function App() {
     //setTab1('Buy')
     return (
       <View style={styles.container}>
+        {user != "" &&
         <Text>Buy Tickets</Text>
+        }
+        {user == "" &&
+        <Text>Must be logged in to buy tickets</Text>
+        }
+        
       </View>
     )
   }
@@ -235,7 +266,10 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    
+
+<NavigationContainer>
+<LogContext.Provider value={{user, setUser}}>
       <Tab.Navigator>
         <Tab.Screen
           name="NowPlaying"
@@ -247,14 +281,18 @@ export default function App() {
           component={PurchaseStackNavigator}
           options={{ headerShown: false }}
         />
-        {isLoggedIn &&
+        {user != "" &&
           <Tab.Screen
             name="Logout"
             component={LogoutScreen}
           />
         }
       </Tab.Navigator>
+      </LogContext.Provider>
     </NavigationContainer>
+
+    
+    
   )
 }
 

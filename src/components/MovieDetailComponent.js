@@ -17,6 +17,11 @@ const MovieDetailComponent = ({ movieDetailObj, userLoggedIn }) => {
         return parseInt(rating);
     }
 
+    //userLoggedIn is the uid of the logged in user
+    //(will be "" if user not logged in)
+
+
+
 
 
     return (
@@ -48,28 +53,26 @@ const MovieDetailComponent = ({ movieDetailObj, userLoggedIn }) => {
             <Text style={styles.movieOverViewStyle}>{movieDetailObj.overview}</Text>
 
             <View style={styles.buttonViewContainer}>
-                {!userLoggedIn &&
+                {userLoggedIn == "" &&
                     <View>
                         <Text>You must be logged in to use this feature</Text>
                     </View>
                 }
 
-                {!userLoggedIn &&
-                    <Button
+                <Button
 
-                        style={styles.buttonStyles}
+                style={styles.buttonStyles}
 
-                        mode='contained'
+                mode='contained'
 
-                        disabled={!userLoggedIn}
+                disabled={userLoggedIn == ""}
 
-                        onPress={() => console.log('Buy tickets pressed')}
-                    >
-                        Buy Tickets
-                    </Button>
-                }
+                onPress={() => navigation.navigate('Buy Tickets')}
+                >
+                Buy Tickets
+                </Button>
 
-                {!userLoggedIn &&
+                {userLoggedIn == "" &&
 
                     <Button
 

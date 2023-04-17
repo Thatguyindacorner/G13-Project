@@ -1,14 +1,31 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, TextInput } from "react-native";
 import { Button } from "react-native-paper";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
 
+//unused
 
-const SignUpComponent = ({ navigation, route }) => {
+const SignUpComponent = ({ updateUser, navigation, route }) => {
 
     const [userEmail, setUserEmail] = useState('')
 
     const [userPassword, setUserPassword] = useState('');
 
+    const signUp = () => {
+        auth = getAuth()
+        createUserWithEmailAndPassword(auth, userEmail, userPassword)
+        .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log("signed up")
+        updateUser(user)
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(`${errorCode}: ${errorMessage}`)
+        });
+    }
 
     return (
         <View style={styles.signUpMainContainer}>
@@ -53,7 +70,7 @@ const SignUpComponent = ({ navigation, route }) => {
 
                 textColor='white'
 
-                onPress={() => console.log('Sign Up Button pressed')}
+                onPress={() => signUp()}
             >
                 Sign Up
             </Button>
