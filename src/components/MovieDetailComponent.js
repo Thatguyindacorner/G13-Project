@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 
 //https://image.tmdb.org/t/p/w500/8uO0gUM8aNqYLs1OsTBQiXu0fEv.jpg
 
-const MovieDetailComponent = ({ movieDetailObj, userLoggedIn }) => {
+const MovieDetailComponent = ({ movieDetailObj, userLoggedIn, userDetails }) => {
 
     const navigation = useNavigation();
 
@@ -19,9 +19,6 @@ const MovieDetailComponent = ({ movieDetailObj, userLoggedIn }) => {
 
     //userLoggedIn is the uid of the logged in user
     //(will be "" if user not logged in)
-
-
-
 
 
     return (
@@ -61,15 +58,23 @@ const MovieDetailComponent = ({ movieDetailObj, userLoggedIn }) => {
 
                 <Button
 
-                style={styles.buttonStyles}
+                    style={styles.buttonStyles}
 
-                mode='contained'
+                    mode='contained'
 
-                disabled={userLoggedIn == ""}
+                    disabled={userLoggedIn == ""}
 
-                onPress={() => navigation.navigate('Buy Tickets')}
+                    onPress={() => {
+                        navigation.navigate('Buy Tickets', {
+                            userEmail: userDetails.email,
+                            movieTitle: movieDetailObj.title,
+                            movieId: movieDetailObj.id,
+                            userId: userLoggedIn
+
+                        })
+                    }}
                 >
-                Buy Tickets
+                    Buy Tickets
                 </Button>
 
                 {userLoggedIn == "" &&

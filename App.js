@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createContext, useState } from 'react';
@@ -9,6 +9,7 @@ import MovieDetailComponent from './src/components/MovieDetailComponent';
 import SignUpComponent from './src/components/SignUpComponent';
 import LoginComponent from './src/components/LoginComponent';
 import { getAuth, signOut } from "firebase/auth";
+import BuyTicketsComponent from './src/components/BuyTicketsComponent';
 
 
 const Stack = createNativeStackNavigator();
@@ -20,14 +21,17 @@ export default function App() {
 
   const [isLoggedIn, setLoginState] = useState(false)
   const [user, setUser] = useState("")
+  const [userDetails, setUserDetails] = useState(null);
   var uid = ""
 
-  const updateUser = (newID) => {
+  const updateUser = (user) => {
     console.log("also here")
-    setUser(newID)
-    uid = newID
+    //setUser(newID)
+    setUser(user.uid);
+    setUserDetails(user);
+    //uid = newID
     setLoginState(true)
-}
+  }
 
   const logout = (navigation) => {
     const auth = getAuth()
@@ -35,16 +39,17 @@ export default function App() {
       // Sign-out successful.
       console.log("signed out")
       setUser("")
+      setUserDetails(null)
       uid = ""
       setLoginState(false)
     })
-    .catch((error) => {
-    // An error happened.
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.log(`${errorCode}: ${errorMessage}`)
-    })
-    
+      .catch((error) => {
+        // An error happened.
+        const errorCode = error.code
+        const errorMessage = error.message
+        console.log(`${errorCode}: ${errorMessage}`)
+      })
+
   }
 
   // const login = (navigation) => {
@@ -117,6 +122,12 @@ export default function App() {
   }
 
   function LoginScreen({ navigation }) {
+
+    const afterLoginCallBk = () => {
+      console.log('After Login Call Bk');
+      navigation.dispatch(StackActions.popToTop());
+    }
+
     return (
       <View style={styles.loginContainer}>
         {user != "" &&
@@ -127,11 +138,12 @@ export default function App() {
               onPress={() => navigation.goBack()}
             />
           </View>
+
         }
         {user == "" &&
           <LoginComponent
             updateUser={updateUser}
-
+            loginCallBk={() => afterLoginCallBk()}
           />
 
           // <View>
@@ -200,7 +212,9 @@ export default function App() {
           <MovieDetailComponent
             movieDetailObj={movie}
             userLoggedIn={user}
-            onSignInOutButtonPressed={() => signInSignUpButtonPressed()} />
+            userDetails={userDetails}
+            onSignInOutButtonPressed={() => signInSignUpButtonPressed()
+            } />
 
           {/* {!isLoggedIn &&
           <View>
@@ -233,17 +247,45 @@ export default function App() {
     )
   }
 
-  function BuyTicketsScreen({ navigation }) {
+  function BuyTicketsScreen({ navigation, route }) {
     //setTab1('Buy')
+
+    const userEmail = route.params.userEmail;
+
+    const movieTitle = route.params.movieTitle;
+
+    const movieId = route.params.movieId;
+
+    const userId = route.params.userId;
+
+
+    console.log(`User Email: ${JSON.stringify(userEmail)}`);
+    console.log(`User ID: ${userId}`);
+    console.log(`Movie ID: ${JSON.stringify(movieId)}`);
+    console.log(`Movie Title: ${movieTitle}`);
+
+    //buyTicketsCallBack={(movieDetailsObj, userDetails) => buyTicketsCallBack(movieDetailsObj, userDetails)}
+
+    const goToHomeScreenCallBk = () => {
+      navigation.dispatch(StackActions.popToTop());
+    }
+
+
     return (
-      <View style={styles.container}>
+      <View style={styles.buyTicketsContainer}>
         {user != "" &&
-        <Text>Buy Tickets</Text>
+          <BuyTicketsComponent
+            userEmail={userEmail}
+            movieTitle={movieTitle}
+            movieId={movieId}
+            userId={userId}
+            homeScreenCallBk={() => goToHomeScreenCallBk()}
+          />
         }
         {user == "" &&
-        <Text>Must be logged in to buy tickets</Text>
+          <Text>Must be logged in to buy tickets</Text>
         }
-        
+
       </View>
     )
   }
@@ -266,33 +308,33 @@ export default function App() {
   }
 
   return (
-    
 
-<NavigationContainer>
-<LogContext.Provider value={{user, setUser}}>
-      <Tab.Navigator>
-        <Tab.Screen
-          name="NowPlaying"
-          component={NowPlayingStackNavigator}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name="MyPurchases"
-          component={PurchaseStackNavigator}
-          options={{ headerShown: false }}
-        />
-        {user != "" &&
+
+    <NavigationContainer>
+      <LogContext.Provider value={{ user, setUser }}>
+        <Tab.Navigator>
           <Tab.Screen
-            name="Logout"
-            component={LogoutScreen}
+            name="NowPlaying"
+            component={NowPlayingStackNavigator}
+            options={{ headerShown: false }}
           />
-        }
-      </Tab.Navigator>
+          <Tab.Screen
+            name="MyPurchases"
+            component={PurchaseStackNavigator}
+            options={{ headerShown: false }}
+          />
+          {user != "" &&
+            <Tab.Screen
+              name="Logout"
+              component={LogoutScreen}
+            />
+          }
+        </Tab.Navigator>
       </LogContext.Provider>
     </NavigationContainer>
 
-    
-    
+
+
   )
 }
 
@@ -319,6 +361,10 @@ const styles = StyleSheet.create({
   },
 
   loginContainer: {
+    flex: 1
+  },
+
+  buyTicketsContainer: {
     flex: 1
   }
 
