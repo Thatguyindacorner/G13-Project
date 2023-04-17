@@ -8,7 +8,7 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } f
 import { collection, addDoc } from "firebase/firestore";
 
 
-const LoginComponent = ({ updateUser, loginCallBk }) => {
+const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
     //const {isLoggedIn, setLoginState} = useContext(LogContext)
     //const navigation = useNavigation();
@@ -33,7 +33,7 @@ const LoginComponent = ({ updateUser, loginCallBk }) => {
                 updateUser(user);
                 //navigation.dispatch(StackActions.pop(1));
 
-                loginCallBk();
+                homeScreenCallBk();
             })
             .catch((error) => {
                 const errorCode = error.code
@@ -52,7 +52,7 @@ const LoginComponent = ({ updateUser, loginCallBk }) => {
                 //updateUser(user.uid)
                 updateUser(user)
                 //navigation.dispatch(StackActions.pop(1));
-                loginCallBk();
+                homeScreenCallBk();
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -77,6 +77,10 @@ const LoginComponent = ({ updateUser, loginCallBk }) => {
 
                     style={styles.textInputStyle}
 
+                    autoCorrect={false}
+
+                    autoCapitalize='none'
+
                     placeholder="Enter Email"
 
                     keyboardType='email-address'
@@ -94,6 +98,10 @@ const LoginComponent = ({ updateUser, loginCallBk }) => {
                     placeholder="Enter Password"
 
                     keyboardType='name-phone-pad'
+
+                    autoCorrect={false}
+
+                    autoCapitalize='none'
 
                     secureTextEntry={true}
 
@@ -158,6 +166,10 @@ const LoginComponent = ({ updateUser, loginCallBk }) => {
 
                     style={styles.textInputStyle}
 
+                    autoCorrect={false}
+
+                    autoCapitalize='none'
+
                     placeholder="Enter Email"
 
                     keyboardType='email-address'
@@ -171,6 +183,10 @@ const LoginComponent = ({ updateUser, loginCallBk }) => {
 
                 <TextInput
                     style={styles.textInputStyle}
+
+                    autoCorrect={false}
+
+                    autoCapitalize='none'
 
                     placeholder="Enter Password"
 

@@ -82,6 +82,10 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
 
                 style={styles.textInputStyle}
 
+                autoCorrect={false}
+
+                autoCapitalize='none'
+
                 placeholder="Enter Email Address"
 
                 value={email}
@@ -93,7 +97,12 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
             <Text>Your Name</Text>
             <TextInput
                 style={styles.textInputStyle}
+
                 placeholder="Enter Name"
+
+                autoCorrect={false}
+
+                autoCapitalize='none'
 
                 value={name}
 

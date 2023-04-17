@@ -1,5 +1,5 @@
-import React from "react";
-import { Text, View, StyleSheet, FlatList, ScrollView, Pressable } from "react-native";
+import React, { useState } from "react";
+import { Text, View, StyleSheet, FlatList, ScrollView, Pressable, RefreshControl } from "react-native";
 import useResults from "../hooks/useResults";
 import { Card, TouchableRipple } from "react-native-paper";
 
@@ -7,12 +7,32 @@ const GetNowPlayingComponent = ({ movieClickedCallBk }) => {
 
     const [getAllMoviesFromApi, movieResults, errorMessage] = useResults();
 
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+
+        await getAllMoviesFromApi();
+
+        setRefreshing(false);
+
+    }
+
     return (
         <View style={styles.mainContainer}>
             <Text style={styles.textHeadingStyle}>Now Playing</Text>
 
             <FlatList
                 style={styles.flatListStyle}
+
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor='red'
+                    />
+                }
+
                 data={movieResults}
 
                 keyExtractor={(movie) => {

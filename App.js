@@ -123,9 +123,13 @@ export default function App() {
 
   function LoginScreen({ navigation }) {
 
-    const afterLoginCallBk = () => {
-      console.log('After Login Call Bk');
-      navigation.dispatch(StackActions.popToTop());
+    const goToHomeScreenCallBk = () => {
+      console.log('-------------goToHomeScreenCallBk called-----------');
+      //navigation.dispatch(StackActions.popToTop());
+      //navigation.navigate('Now Playing');
+      // navigation.navigate('NowPlaying');
+      navigation.goBack();
+
     }
 
     return (
@@ -143,7 +147,7 @@ export default function App() {
         {user == "" &&
           <LoginComponent
             updateUser={updateUser}
-            loginCallBk={() => afterLoginCallBk()}
+            homeScreenCallBk={() => goToHomeScreenCallBk()}
           />
 
           // <View>
@@ -312,7 +316,7 @@ export default function App() {
 
     <NavigationContainer>
       <LogContext.Provider value={{ user, setUser }}>
-        <Tab.Navigator>
+        <Tab.Navigator >
           <Tab.Screen
             name="NowPlaying"
             component={NowPlayingStackNavigator}
