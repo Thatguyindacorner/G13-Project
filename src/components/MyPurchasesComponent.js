@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { FlatList, StyleSheet, Text, View, RefreshControl } from 'react-native'
 import findPurchases from "../hooks/findPurchases";
 import { Card } from "react-native-paper";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 //import TicketDetailedIcon from "react-native-bootstrap-icons/icons/ticket-detailed";
 
-const MyPurchasesComponent = ({uid}) => {
+const MyPurchasesComponent = ({ uid }) => {
 
     console.log(`In Component: ${uid}`)
 
@@ -28,7 +29,7 @@ const MyPurchasesComponent = ({uid}) => {
         <View style={styles.mainContainer}>
             <Text style={styles.textHeadingStyle}>Your Tickets</Text>
 
-                <FlatList
+            <FlatList
                 style={styles.flatListStyle}
                 data={purchases}
 
@@ -43,40 +44,40 @@ const MyPurchasesComponent = ({uid}) => {
                 renderItem={({ item }) => {
                     return (
 
-                        
+
 
                         <Card mode='elevated' style={{ marginVertical: 8, padding: 15, marginHorizontal: 5 }}>
-                            
+
                             {errorMessage == "No Results Found" &&
                                 <Text style={styles.empty}>No Purchases Yet</Text>
                             }
 
                             {errorMessage != "No Results Found" &&
                                 <View style={styles.HStack}>
-                                <View style={styles.HStackContent}>
-                                
-                                <Text>*Icon*</Text>
+                                    <View style={styles.HStackContent}>
 
+                                        <Icon name='ticket' size={24} color={'red'} />
+
+                                    </View>
+                                    <View style={styles.HStackContent}>
+                                        <Text style={{ fontWeight: "bold", paddingBottom: 2 }}>{item.movieName}</Text>
+                                        <Text >Number of Tickets: {item.numTickets}</Text>
+                                        <Text style={{ color: "red", paddingTop: 2 }}>Total Paid: ${item.total}</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.HStackContent}>
-                                    <Text style={{fontWeight: "bold", paddingBottom: 2}}>{item.movieName}</Text>
-                                    <Text >Number of Tickets: {item.numTickets}</Text>
-                                    <Text style={{color: "red", paddingTop: 2}}>Total Paid: ${item.total}</Text>
-                                </View>
-                            </View>
                             }
-                            
-                            
-                                
+
+
+
 
                         </Card>
                     )
                 }}
 
             />
-            
 
-            
+
+
 
         </View>
 
@@ -98,21 +99,21 @@ const styles = StyleSheet.create({
         textAlign: "center",
         padding: 2,
         width: 200
-      },
+    },
 
     HStack: {
         flexDirection: 'row',
         alignItems: "center",
         padding: 2,
         //margin: 10
-      },
+    },
 
     HStackContent: {
         alignItems: "stretch",
         paddingLeft: 10,
         paddingRight: 10,
     },
-    
+
 
     textHeadingStyle: {
         fontSize: 20,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput } from "react-native";
-import { Button } from "react-native-paper";
+import { Text, View, StyleSheet, TextInput, Alert } from "react-native";
+import { Button, Dialog, Portal, Provider } from "react-native-paper";
 import { db } from "../config/firebaseconfig";
 import { setDoc, addDoc, collection } from "firebase/firestore";
 
@@ -18,6 +18,15 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
     const [email, setEmail] = useState(userEmail);
     const [name, setName] = useState('');
     const [counter, setCounter] = useState(1);
+
+    const [visible, setVisible] = useState(false);
+
+    const showDialog = () => setVisible(true);
+
+    const hideDialog = () => {
+        setVisible(false);
+        homeScreenCallBk();
+    }
 
     const incrementCounter = () => {
         setCounter(counter + 1);
@@ -63,7 +72,9 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
 
             console.log(`Document Added successfully to collection, DOCID: ${docInserted.id}`);
 
-            homeScreenCallBk();
+            //Alert.alert('Success', 'Purchase Successful');
+            showDialog();
+            // homeScreenCallBk();
         } catch (err) {
             console.log(`Error While Adding Document: ${err}`);
         }
@@ -72,87 +83,106 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
 
 
     return (
-        <View style={styles.mainContainer}>
-            <Text style={styles.movieNameStyle}>Buy Tickets</Text>
+        <Provider>
+            <View style={styles.mainContainer}>
+                <Text style={styles.movieNameStyle}>Buy Tickets</Text>
 
-            <Text style={styles.movieNameStyle}>{movieTitle}</Text>
+                <Text style={styles.movieNameStyle}>{movieTitle}</Text>
 
-            <Text>Your Email Address</Text>
-            <TextInput
+                <Text style={styles.labelStyle}>Your Email Address</Text>
+                <TextInput
 
-                style={styles.textInputStyle}
+                    style={styles.textInputStyle}
 
-                autoCorrect={false}
+                    autoCorrect={false}
 
-                autoCapitalize='none'
+                    autoCapitalize='none'
 
-                placeholder="Enter Email Address"
+                    placeholder="Enter Email Address"
 
-                value={email}
+                    value={email}
 
-                onChangeText={(newValue) => setEmail(newValue)}
+                    onChangeText={(newValue) => setEmail(newValue)}
 
-            />
+                />
 
-            <Text>Your Name</Text>
-            <TextInput
-                style={styles.textInputStyle}
+                <Text style={styles.labelStyle}>Your Name</Text>
+                <TextInput
+                    style={styles.textInputStyle}
 
-                placeholder="Enter Name"
+                    placeholder="Enter Name"
 
-                autoCorrect={false}
+                    autoCorrect={false}
 
-                autoCapitalize='none'
+                    autoCapitalize='none'
 
-                value={name}
+                    value={name}
 
-                onChangeText={(newValue) => setName(newValue)}
+                    onChangeText={(newValue) => setName(newValue)}
 
-            />
+                />
 
-            <View style={styles.incDecContainer}>
+                <Text style={styles.labelStyle}>Select Number of Tickets</Text>
+                <View style={styles.incDecContainer}>
+                    <Button
+                        mode='elevated'
+
+                        buttonColor='#ff8000'
+
+                        textColor='white'
+
+                        onPress={decrementCounter}
+
+                    >
+                        -
+                    </Button>
+
+                    <Text style={styles.valueStyle}>{counter}</Text>
+
+                    <Button
+                        mode='elevated'
+
+                        buttonColor='#62b1ff'
+
+                        textColor='white'
+
+                        onPress={incrementCounter}
+                    >
+
+                        +
+
+                    </Button>
+
+                </View>
+
                 <Button
+                    style={styles.purchaseButtonStyle}
                     mode='elevated'
-
-                    buttonColor='#ff8000'
-
+                    buttonColor='#6263ff'
                     textColor='white'
-
-                    onPress={decrementCounter}
-
+                    onPress={onPurchaseTickets}
                 >
-                    -
+                    Purchase Tickets
                 </Button>
 
-                <Text style={styles.valueStyle}>{counter}</Text>
+                {
+                    visible ? (<Portal>
+                        <Dialog visible={visible} onDismiss={hideDialog}>
+                            <Dialog.Title>Success</Dialog.Title>
+                            <Dialog.Content>
+                                <Text variant="bodyMedium">Purchase Successful</Text>
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <Button onPress={hideDialog}>OK</Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                    </Portal>) : null
+                }
 
-                <Button
-                    mode='elevated'
 
-                    buttonColor='#62b1ff'
-
-                    textColor='white'
-
-                    onPress={incrementCounter}
-                >
-
-                    +
-
-                </Button>
 
             </View>
-
-            <Button
-                style={styles.purchaseButtonStyle}
-                mode='elevated'
-                buttonColor='#6263ff'
-                textColor='white'
-                onPress={onPurchaseTickets}
-            >
-                Purchase Tickets
-            </Button>
-
-        </View>
+        </Provider>
 
     )
 }
@@ -163,10 +193,24 @@ const styles = StyleSheet.create({
         margin: 8
     },
 
-    movieNameStyle: {
-        alignSelf: 'center'
+    screenNameStyle: {
+        alignSelf: 'center',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginVertical: 10
     },
 
+    movieNameStyle: {
+        alignSelf: 'center',
+        fontSize: 18,
+        fontWeight: '600',
+        marginVertical: 10
+    },
+
+    labelStyle: {
+        fontWeight: '400',
+        marginTop: 10
+    },
     textInputStyle: {
         borderWidth: 0.2,
         borderColor: 'gray',

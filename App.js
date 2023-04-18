@@ -11,6 +11,11 @@ import LoginComponent from './src/components/LoginComponent';
 import { getAuth, signOut } from "firebase/auth";
 import BuyTicketsComponent from './src/components/BuyTicketsComponent';
 import MyPurchasesComponent from './src/components/MyPurchasesComponent';
+import Icon from 'react-native-vector-icons/FontAwesome';
+//import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+// import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons/faArrowRightFromBracket';
+
+
 
 
 const Stack = createNativeStackNavigator();
@@ -45,7 +50,7 @@ export default function App() {
       uid = ""
       setLoginState(false)
 
-      
+
     })
       .catch((error) => {
         // An error happened.
@@ -107,11 +112,11 @@ export default function App() {
     //setTab2('Purchases')
     return (
       <View style={styles.container}>
-        
+
         {user != "" &&
           <View>
             <MyPurchasesComponent
-            uid={user}
+              uid={user}
             />
           </View>
         }
@@ -324,7 +329,25 @@ export default function App() {
 
     <NavigationContainer>
       <LogContext.Provider value={{ user, setUser }}>
-        <Tab.Navigator >
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            'tabBarIcon': ({ focused, color, size }) => {
+              let iconName;
+
+              if (route.name === 'MyPurchases') {
+                iconName = 'ticket'
+              } else if (route.name === 'NowPlaying') {
+                iconName = 'film'
+              } else if (route.name === 'Logout') {
+                iconName = 'share'
+                //return <FontAwesomeIcon icon={faArrowRightFromBracket} />
+              }
+              return <Icon name={iconName} size={22} color={focused ? 'red' : '#62b2ff'} />
+            }
+          }
+          )
+          }
+        >
           <Tab.Screen
             name="NowPlaying"
             component={NowPlayingStackNavigator}
@@ -357,7 +380,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   titles: {
     fontSize: 24,
     textAlign: "center",
