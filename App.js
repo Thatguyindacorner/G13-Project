@@ -10,6 +10,7 @@ import SignUpComponent from './src/components/SignUpComponent';
 import LoginComponent from './src/components/LoginComponent';
 import { getAuth, signOut } from "firebase/auth";
 import BuyTicketsComponent from './src/components/BuyTicketsComponent';
+import MyPurchasesComponent from './src/components/MyPurchasesComponent';
 
 
 const Stack = createNativeStackNavigator();
@@ -103,16 +104,19 @@ export default function App() {
     //setTab2('Purchases')
     return (
       <View style={styles.container}>
+        <Text style={styles.titles}>Your Tickets</Text>
         {user != "" &&
           <View>
-            <Text>Your Purchases</Text>
+            <MyPurchasesComponent
+            uid={user}
+            />
           </View>
         }
         {user == "" &&
           <View>
-            <Text>You need to be logged in</Text>
+            <Text>You must be logged in to use the feature.</Text>
             <Button
-              title="Log In"
+              title="Login or Create New Account"
               onPress={() => navigation.navigate("Login")}
             />
           </View>
@@ -348,6 +352,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  
+  titles: {
+    fontSize: 24,
+    textAlign: "center",
+    marginBottom: 25
   },
 
   nowPlayingStyle: {
