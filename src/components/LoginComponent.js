@@ -11,7 +11,7 @@ import { collection, addDoc } from "firebase/firestore";
 const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
     //const {isLoggedIn, setLoginState} = useContext(LogContext)
-    //const navigation = useNavigation();
+    const navigation = useNavigation();
 
     const [makingNewAccount, setLoginType] = useState(false)
 
@@ -20,11 +20,11 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
         updateUser()
     }
 
-    const signIn = (userEmail, userPassword) => {
+    const signIn = async(userEmail, userPassword) => {
         console.log(`${userEmail}`)
         console.log(`${userPassword}`)
         //const auths = getAuth()
-        signInWithEmailAndPassword(auth, userEmail, userPassword)
+        await signInWithEmailAndPassword(auth, userEmail, userPassword)
             .then((userCredential) => {
                 //signed in
                 const user = userCredential.user
@@ -32,19 +32,21 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
                 //updateUser(user.uid)
                 updateUser(user);
                 //navigation.dispatch(StackActions.pop(1));
-
-                homeScreenCallBk();
+                
+                navigation.goBack()
+                //homeScreenCallBk();
             })
             .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
                 console.log(`${errorCode}: ${errorMessage}`)
             })
+            navigation.goBack()
     }
 
-    const signUp = (userEmail, userPassword) => {
+    const signUp = async(userEmail, userPassword) => {
         //const auths = getAuth()
-        createUserWithEmailAndPassword(auth, userEmail, userPassword)
+        await createUserWithEmailAndPassword(auth, userEmail, userPassword)
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
@@ -52,13 +54,16 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
                 //updateUser(user.uid)
                 updateUser(user)
                 //navigation.dispatch(StackActions.pop(1));
-                homeScreenCallBk();
+                
+                
+                //homeScreenCallBk();
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(`${errorCode}: ${errorMessage}`)
             });
+            navigation.goBack()
     }
 
     const validate = () => {

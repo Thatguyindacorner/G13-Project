@@ -35,6 +35,7 @@ export default function App() {
   }
 
   const logout = (navigation) => {
+    navigation.navigate("Now Playing")
     const auth = getAuth()
     signOut(auth).then(() => {
       // Sign-out successful.
@@ -43,6 +44,8 @@ export default function App() {
       setUserDetails(null)
       uid = ""
       setLoginState(false)
+
+      
     })
       .catch((error) => {
         // An error happened.
@@ -104,7 +107,7 @@ export default function App() {
     //setTab2('Purchases')
     return (
       <View style={styles.container}>
-        <Text style={styles.titles}>Your Tickets</Text>
+        
         {user != "" &&
           <View>
             <MyPurchasesComponent
@@ -114,6 +117,7 @@ export default function App() {
         }
         {user == "" &&
           <View>
+            <Text style={styles.titles}>Your Tickets</Text>
             <Text>You must be logged in to use the feature.</Text>
             <Button
               title="Login or Create New Account"
