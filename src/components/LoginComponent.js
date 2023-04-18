@@ -15,14 +15,18 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
     const [makingNewAccount, setLoginType] = useState(false)
 
-    const updateState = () => {
-        console.log("here")
-        updateUser()
+    const [isError, setError] = useState("")
+    var errorMsg = ""
+
+    const clearError = () => {
+        errorMsg = ""
+        setError(errorMsg)
     }
 
     const signIn = async(userEmail, userPassword) => {
         console.log(`${userEmail}`)
         console.log(`${userPassword}`)
+
         //const auths = getAuth()
         await signInWithEmailAndPassword(auth, userEmail, userPassword)
             .then((userCredential) => {
@@ -33,15 +37,23 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
                 updateUser(user);
                 //navigation.dispatch(StackActions.pop(1));
                 
-                navigation.goBack()
+                clearError()
                 //homeScreenCallBk();
             })
             .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
                 console.log(`${errorCode}: ${errorMessage}`)
+                
+                errorMsg = `Error Signing In. Email/Password might be incorrect.`
+                setError(errorMsg)
+                console.log(`msg: ${errorMsg}`)
             })
-            navigation.goBack()
+            //.onfinally(() => {})
+            if (errorMsg == ""){
+                navigation.goBack()
+            }
+            console.log(errorMsg)
     }
 
     const signUp = async(userEmail, userPassword) => {
@@ -55,15 +67,22 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
                 updateUser(user)
                 //navigation.dispatch(StackActions.pop(1));
                 
-                
+                clearError()
                 //homeScreenCallBk();
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(`${errorCode}: ${errorMessage}`)
+
+                errorMsg = `Error Signing Up. Email might already be in use.`
+                setError(errorMsg)
+                console.log(`msg: ${errorMsg}`)
             });
-            navigation.goBack()
+            if (errorMsg == ""){
+                navigation.goBack()
+            }
+            console.log(errorMsg)
     }
 
     const validate = () => {
@@ -92,7 +111,10 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
                     value={userEmail}
 
-                    onChangeText={(newValue) => setUserEmail(newValue)}
+                    onChangeText={(newValue) => {
+                        setUserEmail(newValue)
+                        //clearError()
+                    }}
 
                 />
 
@@ -112,7 +134,10 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
                     value={userPassword}
 
-                    onChangeText={(newValue) => setUserPassword(newValue)}
+                    onChangeText={(newValue) => {
+                        setUserPassword(newValue)
+                        //clearError()
+                    }}
                 />
 
                 <View style={styles.buttonViewContainer}>
@@ -144,12 +169,12 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
                         onPress={() => {
                             console.log('Sign Up Button pressed. Go to Sign Up Screen')
                             //navigation.navigate('SignUp', { updateUser })
+                            clearError()
                             setLoginType(true)
                         }}
                     >
                         Sign Up
                     </Button>
-
 
                 </View>
 
@@ -181,7 +206,10 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
                     value={userEmail}
 
-                    onChangeText={(newValue) => setUserEmail(newValue)}
+                    onChangeText={(newValue) => {
+                        setUserEmail(newValue)
+                        //clearError()
+                    }}
 
                 />
 
@@ -201,7 +229,10 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
 
                     value={userPassword}
 
-                    onChangeText={(newValue) => setUserPassword(newValue)}
+                    onChangeText={(newValue) => {
+                        setUserPassword(newValue)
+                        //clearError()
+                    }}
                 />
 
                 <Button
@@ -230,6 +261,12 @@ const LoginComponent = ({ updateUser, homeScreenCallBk }) => {
             }
             {makingNewAccount &&
                 <SignUpComponent />}
+            {isError != "" &&
+            <View >
+                 <Text style={styles.error}>{isError}</Text>
+            </View>
+            
+            }
         </View>
 
 
@@ -241,6 +278,13 @@ const styles = StyleSheet.create({
     signUpMainContainer: {
         margin: 8,
         padding: 30
+    },
+
+    error: {
+        textAlign: "center",
+        color: "red",
+        paddingHorizontal: 20,
+        fontWeight: "bold"
     },
 
     textInputStyle: {
