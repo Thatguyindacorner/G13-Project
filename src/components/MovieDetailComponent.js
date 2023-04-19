@@ -160,7 +160,8 @@ const styles = StyleSheet.create({
     },
 
     buttonViewContainer: {
-        marginTop: 15,
+        marginTop: 25,
+        marginBottom: 15,
         alignItems: 'center'
     },
 
@@ -169,7 +170,9 @@ const styles = StyleSheet.create({
     },
 
     buttonStyles: {
-        marginVertical: 8
+        marginVertical: 8,
+        width: 300,
+        alignContent: "center"
     },
 
     releaseDateStyle: {

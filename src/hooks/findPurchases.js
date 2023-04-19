@@ -63,6 +63,7 @@ export default (uid) => {
 
             console.log("success")
             console.log(dbResults)
+            setErrorMessage("")
             setdbResults(temp)
             console.log(`results: ${temp.length}`)
         }

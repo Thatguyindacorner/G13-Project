@@ -4,6 +4,8 @@ import findPurchases from "../hooks/findPurchases";
 import { Card } from "react-native-paper";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+//import { useIsFocused } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 //import TicketDetailedIcon from "react-native-bootstrap-icons/icons/ticket-detailed";
 
@@ -24,6 +26,17 @@ const MyPurchasesComponent = ({ uid }) => {
 
     }
 
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log("entering purchases")
+            onRefresh()
+    
+          return () => {
+            console.log("leaving purchases")
+          };
+        }, [])
+    )
+
     return (
 
         <View style={styles.mainContainer}>
@@ -32,6 +45,8 @@ const MyPurchasesComponent = ({ uid }) => {
             <FlatList
                 style={styles.flatListStyle}
                 data={purchases}
+
+                showsVerticalScrollIndicator={false}
 
                 refreshControl={
                     <RefreshControl
@@ -124,7 +139,7 @@ const styles = StyleSheet.create({
 
     flatListStyle: {
         //alignSelf: 'flex-start',
-        width: '96%',
+        width: '100%',
         //marginVertical: 10
         marginTop: 10,
         marginBottom: 25

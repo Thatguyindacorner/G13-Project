@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { Button } from "react-native-paper";
 import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -121,13 +122,22 @@ export default function App() {
           </View>
         }
         {user == "" &&
-          <View>
-            <Text style={styles.titles}>Your Tickets</Text>
-            <Text>You must be logged in to use the feature.</Text>
-            <Button
-              title="Login or Create New Account"
-              onPress={() => navigation.navigate("Login")}
-            />
+          <View style={styles.container}>
+            <View style={styles.section}>
+              <Text style={styles.titles}>Your Tickets</Text>
+              <Text>You must be logged in to use the feature.</Text>
+              <Button
+                style={styles.buttonStyles}
+                mode='elevated'
+                buttonColor='orangered'
+                textColor="white"
+                onPress={() => {
+                    navigation.navigate('Login')
+                }}
+            >
+                Login or Create New Account
+            </Button>
+            </View>
           </View>
         }
       </View>
@@ -147,6 +157,7 @@ export default function App() {
 
     return (
       <View style={styles.loginContainer}>
+        <View style={styles.sectionLogIn}>
         {user != "" &&
           <View>
             <Text>You are logged in</Text>
@@ -178,6 +189,7 @@ export default function App() {
           //   />
           // </View>
         }
+      </View>
       </View>
     )
   }
@@ -222,35 +234,12 @@ export default function App() {
     return (
       <ScrollView style={styles.movieDetailsStyle}>
         <View >
-          {/* <Text>
-          Details Screen. Movie Name : {movie.title}
-        </Text> */}
-
           <MovieDetailComponent
             movieDetailObj={movie}
             userLoggedIn={user}
             userDetails={userDetails}
             onSignInOutButtonPressed={() => signInSignUpButtonPressed()
             } />
-
-          {/* {!isLoggedIn &&
-          <View>
-            <Text>You must be logged in to use this feature</Text>
-          </View>
-        } */}
-          {/* <Button
-          title="Buy Tickets"
-          onPress={() => navigation.navigate("Buy Tickets")}
-          disabled={!isLoggedIn}
-        /> */}
-          {/* {!isLoggedIn &&
-          <View>
-            <Button
-              title="Login or Create new Account"
-              onPress={() => navigation.navigate("Login")}
-            />
-          </View>
-        } */}
         </View>
       </ScrollView>
     )
@@ -309,19 +298,37 @@ export default function App() {
     )
   }
 
+  function LogoutStackNavigator({ navigation }) {
+    return (
+      <Stack.Navigator initialRouteName={'Logout'}>
+        <Stack.Screen
+          name="Logout"
+          component={LogoutScreen}
+        />
+      </Stack.Navigator>
+    )
+  }
+
 
   function LogoutScreen({ navigation }) {
     return (
       <View style={styles.container}>
-        <Text>
-          Logout Screen
-        </Text>
-        <Button
-          title="Log Out"
-          onPress={() =>
-            logout(navigation)
-          }
-        />
+        <View style={styles.section}>
+          <Text style={styles.titles}>Log Out</Text>
+          <Text>
+            Are you ready to logout?
+          </Text>
+          <Button
+            style={styles.buttonStyles}
+            mode='elevated'
+            buttonColor='orangered'
+            textColor="white"
+            onPress={() =>
+              logout(navigation)
+            }
+        >Logout
+        </Button>
+        </View>
       </View>
     )
   }
@@ -340,7 +347,7 @@ export default function App() {
                 iconName = 'ticket'
               } else if (route.name === 'NowPlaying') {
                 iconName = 'film'
-              } else if (route.name === 'Logout') {
+              } else if (route.name === 'LogoutScreen') {
                 iconName = 'share'
                 //return <FontAwesomeIcon icon={faArrowRightFromBracket} />
               }
@@ -362,8 +369,9 @@ export default function App() {
           />
           {user != "" &&
             <Tab.Screen
-              name="Logout"
-              component={LogoutScreen}
+              name="LogoutScreen"
+              component={LogoutStackNavigator}
+              options={{ headerShown: false }}
             />
           }
         </Tab.Navigator>
@@ -378,21 +386,51 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    //backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    textAlign: 'center',
+  },
+
+  section: {
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 6,
+    padding: 25,
+    backgroundColor: "white",
+    alignItems: "center"
+  },
+
+  sectionLogIn: {
+    //borderWidth: 1,
+    //borderColor: 'black',
+    //borderRadius: 6,
+    //padding: 25,
+    //backgroundColor: "white",
+    //alignItems: "center"
   },
 
   titles: {
     fontSize: 24,
-    textAlign: "center",
-    marginBottom: 25
+    fontWeight: 'bold',
+    marginBottom: 15
   },
 
   nowPlayingStyle: {
     flex: 1,
 
   },
+
+  buttonStyles: {
+    marginVertical: 8,
+    width: 300,
+    alignContent: "center"
+},
+
+movieTitleStyle: {
+  fontSize: 16,
+  fontWeight: 'bold',
+},
 
   movieDetailsStyle: {
     flex: 1,
