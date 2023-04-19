@@ -289,21 +289,23 @@ export default function App() {
 
 
     return (
-      <View style={styles.buyTicketsContainer}>
-        {user != "" &&
-          <BuyTicketsComponent
-            userEmail={userEmail}
-            movieTitle={movieTitle}
-            movieId={movieId}
-            userId={userId}
-            homeScreenCallBk={() => goToHomeScreenCallBk()}
-          />
-        }
-        {user == "" &&
-          <Text>Must be logged in to buy tickets</Text>
-        }
+      <ScrollView>
+        <View style={styles.buyTicketsContainer}>
+          {user != "" &&
+            <BuyTicketsComponent
+              userEmail={userEmail}
+              movieTitle={movieTitle}
+              movieId={movieId}
+              userId={userId}
+              homeScreenCallBk={() => goToHomeScreenCallBk()}
+            />
+          }
+          {user == "" &&
+            <Text>Must be logged in to buy tickets</Text>
+          }
 
-      </View>
+        </View>
+      </ScrollView>
     )
   }
 

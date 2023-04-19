@@ -17,9 +17,43 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
 
     const [email, setEmail] = useState(userEmail);
     const [name, setName] = useState('');
-    const [counter, setCounter] = useState(1);
+    const [counter, setCounter] = useState(0);
 
     const [visible, setVisible] = useState(false);
+
+    const [state, setState] = useState({
+        title: '',
+        numOfTickets: 0,
+        subtotal: 0,
+        tax: 0,
+        netTotal: 0,
+        showSummary: false
+    })
+
+    // const [showState, setShowState] = useState(false);
+
+
+
+    const showMovieSummary = (updateCounter) => {
+
+        const total = PER_TICKET_PRICE * updateCounter;
+
+        const tax = total * TAX_RATE;
+
+        const netSum = total + tax;
+
+        setState({
+            ...state,
+            title: movieTitle,
+            numOfTickets: updateCounter,
+            subtotal: total,
+            tax: tax.toFixed(2),
+            netTotal: netSum.toFixed(2),
+            showSummary: true
+        });
+
+        //setShowState(true)
+    }
 
     const showDialog = () => setVisible(true);
 
@@ -29,16 +63,27 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
     }
 
     const incrementCounter = () => {
-        setCounter(counter + 1);
+        const updateCounter = counter + 1;
+        setCounter(updateCounter);
+        showMovieSummary(updateCounter);
     }
 
     const decrementCounter = () => {
         if (counter - 1 <= 0) {
-            setCounter(1)
+            setCounter(0);
+            // setShowState(false)
+            setState({
+                ...state,
+                showSummary: false
+            })
         } else {
-            setCounter(counter - 1)
+            const updateCounter = counter - 1
+            setCounter(updateCounter)
+            showMovieSummary(updateCounter);
         }
     }
+
+
 
     const calculateTicketPrice = () => {
 
@@ -179,6 +224,34 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
                     </Portal>) : null
                 }
 
+                {state.showSummary &&
+                    <View style={{
+                        borderWidth: 0.3,
+                        borderColor: 'gray',
+                        paddingLeft: 10,
+                        paddingTop: 20,
+                        paddingBottom: 20,
+                        gap: 8
+                    }}>
+                        <Text style={{ fontSize: 16 }}>{state.title}</Text>
+                        <Text style={{ fontSize: 16 }}>Number of Tickets: {state.numOfTickets}</Text>
+                        <Text style={{ fontSize: 16 }}>Subtotal: ${state.subtotal}</Text>
+                        <Text style={{ fontSize: 16 }}>Tax: ${state.tax}</Text>
+                        <Text style={{
+                            fontSize: 16,
+                            padding: 8,
+                            borderWidth: 0.1,
+                            borderColor: '#e6e600',
+                            backgroundColor: '#e6e600',
+                            marginRight: 10
+                        }}>Total: ${state.netTotal}</Text>
+                    </View>
+                }
+
+                {!state.showSummary &&
+                    null
+                }
+
 
 
             </View>
@@ -233,7 +306,27 @@ const styles = StyleSheet.create({
     purchaseButtonStyle: {
         alignSelf: 'center',
         marginVertical: 30
+    },
+
+    orderSummaryContainer: {
+        borderWidth: 0.3,
+        borderColor: 'gray',
+        paddingLeft: 10,
+        paddingTop: 20,
+        paddingBottom: 20,
+        gap: 8
+    },
+
+    orderSummaryTextStyle: {
+        fontSize: 16
+    },
+
+    netTotalStyle: {
+        fontSize: 16,
+        borderWidth: 0.1,
+        borderColor: 'yellow'
     }
+
 });
 
 export default BuyTicketsComponent;
