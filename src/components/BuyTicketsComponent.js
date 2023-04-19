@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TextInput, Alert } from "react-native";
 import { Button, Dialog, Portal, Provider } from "react-native-paper";
 import { db } from "../config/firebaseconfig";
@@ -29,6 +29,8 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
         netTotal: 0,
         showSummary: false
     })
+
+    const [errorMessage, setErrorMessage] = useState('');
 
     // const [showState, setShowState] = useState(false);
 
@@ -63,6 +65,9 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
     }
 
     const incrementCounter = () => {
+        if (errorMessage) {
+            setErrorMessage('')
+        }
         const updateCounter = counter + 1;
         setCounter(updateCounter);
         showMovieSummary(updateCounter);
@@ -76,8 +81,12 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
                 ...state,
                 showSummary: false
             })
+
         } else {
             const updateCounter = counter - 1
+            if (errorMessage) {
+                setErrorMessage('')
+            }
             setCounter(updateCounter)
             showMovieSummary(updateCounter);
         }
@@ -100,6 +109,25 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
     const onPurchaseTickets = async () => {
 
         try {
+
+            if (email.length <= 0) {
+                setErrorMessage('Email cannot be empty');
+                return;
+            }
+            setErrorMessage('');
+
+            if (name.length <= 0) {
+                setErrorMessage('Name Cannot be empty');
+                return;
+            }
+            setErrorMessage('')
+
+            if (counter <= 0) {
+                setErrorMessage('Please select at least 1 Ticket');
+                return
+            }
+            setErrorMessage('');
+
             var collRef = collection(db, "Purchases");
 
             var ticketPrice = calculateTicketPrice();
@@ -122,10 +150,15 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
             // homeScreenCallBk();
         } catch (err) {
             console.log(`Error While Adding Document: ${err}`);
+            setErrorMessage('Error Creating Document on Firestore');
+
         }
 
     }//onPurchaseTickets
 
+    useEffect(() => {
+        console.log('Error Message updated');
+    }, [errorMessage]);
 
     return (
         <Provider>
@@ -211,6 +244,10 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
                 </Button>
 
                 {
+                    errorMessage ? <Text style={{ alignSelf: 'center', color: 'red', fontSize: 15 }}>{errorMessage}</Text> : null
+                }
+
+                {
                     visible ? (<Portal>
                         <Dialog visible={visible} onDismiss={hideDialog}>
                             <Dialog.Title>Success</Dialog.Title>
@@ -228,10 +265,12 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
                     <View style={{
                         borderWidth: 0.3,
                         borderColor: 'gray',
+                        borderRadius: 2,
                         paddingLeft: 10,
                         paddingTop: 20,
                         paddingBottom: 20,
-                        gap: 8
+                        gap: 8,
+
                     }}>
                         <Text style={{ fontSize: 16 }}>{state.title}</Text>
                         <Text style={{ fontSize: 16 }}>Number of Tickets: {state.numOfTickets}</Text>
@@ -242,8 +281,16 @@ const BuyTicketsComponent = ({ userEmail, movieTitle, movieId, userId, homeScree
                             padding: 8,
                             borderWidth: 0.1,
                             borderColor: '#e6e600',
+                            borderRadius: 2,
                             backgroundColor: '#e6e600',
-                            marginRight: 10
+                            marginRight: 10,
+                            shadowColor: 'gray',
+                            shadowOpacity: 0.8,
+                            shadowRadius: 2,
+                            shadowOffset: {
+                                height: 1,
+                                width: 1
+                            }
                         }}>Total: ${state.netTotal}</Text>
                     </View>
                 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Text, View, StyleSheet, FlatList, ScrollView, Pressable, RefreshControl } from "react-native";
 import useResults from "../hooks/useResults";
 import { Card, TouchableRipple } from "react-native-paper";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const GetNowPlayingComponent = ({ movieClickedCallBk }) => {
 
@@ -24,6 +25,8 @@ const GetNowPlayingComponent = ({ movieClickedCallBk }) => {
 
             <FlatList
                 style={styles.flatListStyle}
+
+                showsVerticalScrollIndicator={false}
 
                 refreshControl={
                     <RefreshControl
@@ -50,9 +53,15 @@ const GetNowPlayingComponent = ({ movieClickedCallBk }) => {
                                 }}
                             >
 
-                                <View >
-                                    <Text style={styles.movieTitleStyle}>{item.title}</Text>
-                                    <Text>Release Date: {item.release_date}</Text>
+                                <View style={styles.movieContentContainer}>
+
+                                    <View style={styles.movieInfoStyle}>
+                                        <Text style={styles.movieTitleStyle}>{item.title}</Text>
+                                        <Text>Release Date: {item.release_date}</Text>
+                                    </View>
+
+                                    <Icon style={styles.chevronStyle} name='chevron-right' size={14} color={'#ff0080'} />
+
                                 </View>
 
                             </Pressable>
@@ -105,7 +114,23 @@ const styles = StyleSheet.create({
     movieTitleStyle: {
         fontSize: 16,
         fontWeight: 'bold',
-    }
+    },
+
+    movieContentContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+
+    chevronStyle: {
+        flex: 1,
+        alignSelf: 'center',
+        justifyContent: 'flex-end'
+    },
+
+    movieInfoStyle: {
+        flex: 9
+    },
+
 });
 
 export default GetNowPlayingComponent;
